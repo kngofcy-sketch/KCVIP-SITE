@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { pb } from "./lib/pb.js";
 
 // ─── Utility ────────────────────────────────────────────────────────────────
 const cn = (...classes) => classes.filter(Boolean).join(" ");
@@ -429,16 +428,6 @@ function Portfolio() {
 
 // ─── Pricing ─────────────────────────────────────────────────────────────────
 function PricingCard({ pkg, index, visible }) {
-  // CTA — opens contact section for booking / inquiry
-  const handleBuy = () => {
-    const el = document.getElementById("contact");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-      // Pass selected service via custom event so the form pre-selects it
-      window.dispatchEvent(new CustomEvent("kc:selectService", { detail: `${pkg.name} (${pkg.price})` }));
-    }
-  };
-
   const isElite = pkg.elite;
   const isPopular = pkg.popular;
 
@@ -565,18 +554,14 @@ function Contact() {
 
   const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setStatus("sending");
-    const controller = new AbortController();
-    try {
-      await pb.collection("bookings").create(form, { signal: controller.signal });
+    // Simulación de envío directo
+    setTimeout(() => {
       setStatus("success");
       setForm({ name: "", email: "", phone: "", service: "", message: "" });
-    } catch (err) {
-      if (err?.isAbort) return;
-      setStatus("error");
-    }
+    }, 1000);
   };
 
   const services = packages.map((p) => `${p.name} (${p.price})`).concat(["Custom / Not Sure Yet"]);
